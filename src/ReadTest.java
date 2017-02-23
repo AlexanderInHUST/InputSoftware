@@ -16,8 +16,9 @@ public class ReadTest {
     public static void main(String[] args) {
         PinyinTireTree tireTree = new PinyinTireTree("config.is", "library.is");
         tireTree.initial();
-        //InitialCharacterValue.initialValue("three_country_story.txt", "dic.txt", tireTree);
-        TreeMap<Character, Double> map = tireTree.getCharacters("wu");
+        InitialCharacterValue.initialValue("three_country_story.txt", "dic.txt", tireTree);
+        TreeMap<Character, Double> map = tireTree.getCharacters("w");
+        tireTree.chooseCharacter(PinyinTireTree.NOT_CHOOSE);
         for(Character c : map.keySet()) {
             System.out.println(c + " " + map.get(c));
         }

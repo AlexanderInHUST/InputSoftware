@@ -10,6 +10,7 @@ import java.util.*;
 public class PinyinTireTree {
 
     public static final char NOT_CHOOSE = ' ';
+    private static final double VALUE_DECAY_RATE = 0.99999;
 
     private PinyinNode root;
     private File config;
@@ -17,6 +18,7 @@ public class PinyinTireTree {
     private PinyinNode curNode;
     private ArrayList<Character> curChars;
     private ArrayList<Double> curValue;
+    private boolean isClear;
     private ValueComparator comparator;
 
     public PinyinTireTree(String config, String dic) {
@@ -53,6 +55,7 @@ public class PinyinTireTree {
     public TreeMap<Character, Double> getCharacters(String key) {
         curChars = new ArrayList<>();
         curValue = new ArrayList<>();
+        isClear = true;
         return getChars(root, key);
     }
 
@@ -63,13 +66,19 @@ public class PinyinTireTree {
             int pos = curChars.indexOf(ch);
             double x = curValue.get(pos);
             double arctanh = (0.5d * (Math.log((1d + x) / (1d - x)) / Math.log(Math.E))) * 1000d;
-            double v = Math.tanh((arctanh + 1) / 1000d);
+            double v;
             try {
-                curValue.set(pos, v);
                 dic.seek(curNode.addressStart);
-                dic.skipBytes(11 * pos + 3);
-                // 3 bytes for each UTF-8 character
-                dic.writeDouble(v);
+                for (int i = 0; i < curChars.size(); i++) {
+                    if (i == pos) {
+                        v = Math.tanh((arctanh + 1) / 1000d);
+                    } else {
+                        v = curValue.get(i) * VALUE_DECAY_RATE;
+                    }
+                    dic.skipBytes(3);
+                    // 3 bytes for each UTF-8 character
+                    dic.writeDouble(v);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -111,6 +120,15 @@ public class PinyinTireTree {
                         curValue.add(d);
                         output.put(c, d);
                     }
+                    if (!isClear) {
+                        for (PinyinNode child : node.children) {
+                            if(child != null) {
+                                TreeMap<Character, Double> candidate = getChars(child, key);
+                                if (candidate != null)
+                                    output.putAll(candidate);
+                            }
+                        }
+                    }
                     return output;
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -118,6 +136,7 @@ public class PinyinTireTree {
                 }
             } else {
                 TreeMap<Character, Double> output = new TreeMap<>(comparator);
+                isClear = false;
                 for (PinyinNode child : node.children) {
                     if (child != null) {
                         TreeMap<Character, Double> candidate = getChars(child, key);
