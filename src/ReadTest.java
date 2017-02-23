@@ -1,8 +1,11 @@
 import model.PinyinTireTree;
+import tools.InitialCharacterValue;
 
 import java.io.*;
 import java.nio.CharBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.TreeMap;
 
 /**
  * Created by tangyifeng on 17/2/19.
@@ -11,13 +14,12 @@ import java.util.ArrayList;
 public class ReadTest {
 
     public static void main(String[] args) {
-        System.out.println(System.currentTimeMillis());
         PinyinTireTree tireTree = new PinyinTireTree("config.is", "library.is");
         tireTree.initial();
-        ArrayList<Character> list = tireTree.getCharacters("zi");
-        System.out.println(System.currentTimeMillis());
-        for(Character c : list) {
-            System.out.println(c);
+        //InitialCharacterValue.initialValue("three_country_story.txt", "dic.txt", tireTree);
+        TreeMap<Character, Double> map = tireTree.getCharacters("wu");
+        for(Character c : map.keySet()) {
+            System.out.println(c + " " + map.get(c));
         }
     }
 

@@ -27,7 +27,7 @@ public class MainGenerator {
                     if(c != ' ') {
                         byte[] ch = c.toString().getBytes();
                         library.write(ch);
-                        library.writeDouble(Math.tanh(0.00001));
+                        library.writeDouble(Math.tanh(0.001));
                     }
                 }
             }
