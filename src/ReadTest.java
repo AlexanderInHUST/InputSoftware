@@ -16,12 +16,13 @@ public class ReadTest {
     public static void main(String[] args) {
         PinyinTireTree tireTree = new PinyinTireTree("config.is", "library.is");
         tireTree.initial();
-        InitialCharacterValue.initialValue("three_country_story.txt", "dic.txt", tireTree);
-        TreeMap<Character, Double> map = tireTree.getCharacters("w");
-        tireTree.chooseCharacter(PinyinTireTree.NOT_CHOOSE);
+        TreeMap<Character, Double> map = tireTree.getCharacters("yi");
+        TreeMap<String, Double> wordMap = tireTree.chooseCharacter('艺');
         for(Character c : map.keySet()) {
             System.out.println(c + " " + map.get(c));
         }
+        for(String s : wordMap.keySet()) {
+            System.out.println(s + " " + wordMap.get(s));
+        }
     }
-
 }

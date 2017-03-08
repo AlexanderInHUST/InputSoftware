@@ -5,4 +5,7 @@ package model;
  * Email: yifengtang_hust@outlook.com
  */
 public class DicTireTree {
+
+
+
 }

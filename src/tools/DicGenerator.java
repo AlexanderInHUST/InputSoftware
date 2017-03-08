@@ -3,6 +3,7 @@ package tools;
 import java.io.*;
 import java.util.HashSet;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * Created by tangyifeng on 17/2/20.
@@ -19,6 +20,8 @@ public class DicGenerator {
         this.result = new File(resultAddress);
         this.charMap = new TreeMap<>();
     }
+
+    public DicGenerator() {}
 
     public void loadDic() {
         try {
@@ -66,11 +69,25 @@ public class DicGenerator {
         }
     }
 
+    public void getPinyin(String address) {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(address));
+            TreeSet<String> set = new TreeSet<>();
+            String line;
+            while((line = reader.readLine()) != null) {
+                set.add(line.split(":")[0]);
+            }
+            for(String s : set) {
+                System.out.print(s + " ");
+            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
-        DicGenerator generator = new DicGenerator("result.txt", "dic.txt");
-        generator.loadDic();
-        generator.writeDic();
-        System.out.println();
+        new DicGenerator().getPinyin("result.txt");
     }
 
 }
