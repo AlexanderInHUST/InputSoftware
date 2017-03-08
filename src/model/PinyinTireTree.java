@@ -25,18 +25,24 @@ public class PinyinTireTree {
     private ArrayList<String> curWords;
     private ArrayList<Double> curWordsValue;
     private ArrayList<Integer> curLengthOfWords;
+
+    private int wordStartAddress;
     private boolean isClear;
     private ValueComparator comparator;
+    private WordsValueComparator wordsValueComparator;
 
     public PinyinTireTree(String config, String dic) {
         try {
             this.config = new File(config);
             this.dic = new RandomAccessFile(dic, "rw");
             comparator = new ValueComparator();
+            wordsValueComparator = new WordsValueComparator();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+    // Methods for tree
 
     public void initial() {
         TreeMap<String, String> pinyinConfig = new TreeMap<>();
@@ -59,47 +65,6 @@ public class PinyinTireTree {
         }
     }
 
-    public TreeMap<Character, Double> getCharacters(String key) {
-        curChars = new ArrayList<>();
-        curValue = new ArrayList<>();
-        curAddress = new ArrayList<>();
-        curWords = new ArrayList<>();
-        curWordsValue = new ArrayList<>();
-        curLengthOfWords = new ArrayList<>();
-        isClear = true;
-        return getChars(root, key);
-    }
-
-    // a foolish way to update the probability :\
-    // input ' ' (blank) when you don't choose any word
-    public TreeMap<String, Double> chooseCharacter(Character ch) {
-        if (!ch.equals(NOT_CHOOSE)) {
-            int pos = curChars.indexOf(ch);
-            double x = curValue.get(pos);
-            double arctanh = (0.5d * (Math.log((1d + x) / (1d - x)) / Math.log(Math.E))) * 1000d;
-            double v;
-            try {
-                dic.seek(curNode.addressStart);
-                for (int i = 0; i < curChars.size(); i++) {
-                    if (i == pos) {
-                        v = Math.tanh((arctanh + 1) / 1000d);
-                    } else {
-                        v = curValue.get(i) * VALUE_DECAY_RATE;
-                    }
-                    dic.skipBytes(3);
-                    // 3 bytes for each UTF-8 character
-                    dic.writeDouble(v);
-                    dic.skipBytes(8);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return getWords(pos);
-        }
-        curNode = null;
-        return null;
-    }
-
     private void addNode(PinyinNode node, String key, String data) {
         if (key.length() == 0) {
             String info[] = data.split(",");
@@ -113,6 +78,19 @@ public class PinyinTireTree {
             }
             addNode(node.children[cur - 'a'], key.substring(1), data);
         }
+    }
+
+    // Methods for character
+
+    public TreeMap<Character, Double> getCharacters(String key) {
+        curChars = new ArrayList<>();
+        curValue = new ArrayList<>();
+        curAddress = new ArrayList<>();
+        curWords = new ArrayList<>();
+        curWordsValue = new ArrayList<>();
+        curLengthOfWords = new ArrayList<>();
+        isClear = true;
+        return getChars(root, key);
     }
 
     @SuppressWarnings("unchecked")
@@ -175,13 +153,43 @@ public class PinyinTireTree {
         }
     }
 
+    public TreeMap<String, Double> chooseCharacter(Character ch) {
+        if (!ch.equals(NOT_CHOOSE)) {
+            int pos = curChars.indexOf(ch);
+            double x = curValue.get(pos);
+            double arctanh = (0.5d * (Math.log((1d + x) / (1d - x)) / Math.log(Math.E))) * 1000d;
+            double v;
+            try {
+                dic.seek(curNode.addressStart);
+                for (int i = 0; i < curChars.size(); i++) {
+                    if (i == pos) {
+                        v = Math.tanh((arctanh + 1) / 1000d);
+                    } else {
+                        v = curValue.get(i) * VALUE_DECAY_RATE;
+                    }
+                    dic.skipBytes(3);
+                    // 3 bytes for each UTF-8 character
+                    dic.writeDouble(v);
+                    dic.skipBytes(8);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return getWords(pos);
+        }
+        curNode = null;
+        return null;
+    }
+
+    // Methods for words
+
     private TreeMap<String, Double> getWords(int pos) {
         int length = curLengthOfWords.get(pos);
-        int address = curAddress.get(pos);
+        wordStartAddress = curAddress.get(pos);
         try{
             RandomAccessFile wordDic = new RandomAccessFile("WordsDic.txt", "rw");
-            TreeMap<String, Double> wordMap = new TreeMap<>(new WordsValueComparator());
-            wordDic.seek(address);
+            TreeMap<String, Double> wordMap = new TreeMap<>(wordsValueComparator);
+            wordDic.seek(wordStartAddress);
             for (int i = 0; i < length; i++) {
                 String word = wordDic.readUTF();
                 Double value = wordDic.readDouble();
@@ -195,6 +203,34 @@ public class PinyinTireTree {
         }
         return null;
     }
+
+    public void chooseWord(String word) {
+        if (!word.equals(NOT_CHOOSE_S)) {
+            int pos = curWords.indexOf(word);
+            double x = curWordsValue.get(pos);
+            double arctanh = (0.5d * (Math.log((1d + x) / (1d - x)) / Math.log(Math.E))) * 1000d;
+            double v;
+            try {
+                RandomAccessFile wordDic = new RandomAccessFile("WordsDic.txt", "rw");
+                wordDic.seek(wordStartAddress);
+                for (int i = 0; i < curWords.size(); i++) {
+                    if (i == pos) {
+                        v = Math.tanh((arctanh + 1) / 1000d);
+                    } else {
+                        v = curWordsValue.get(i) * VALUE_DECAY_RATE;
+                    }
+                    int l = wordDic.readShort();
+                    wordDic.skipBytes(l);
+                    // 3 bytes for each UTF-8 character
+                    wordDic.writeDouble(v);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    // Some inner class
 
     private class PinyinNode {
         long addressStart;
