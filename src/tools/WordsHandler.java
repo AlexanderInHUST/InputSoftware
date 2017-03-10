@@ -23,16 +23,14 @@ public class WordsHandler {
             BufferedReader reader = new BufferedReader(new FileReader(address));
             String word;
             while((word = reader.readLine()) != null) {
-                if (word.length() < 5) {
-                    LinkedList<String> wordList;
-                    if (wordMap.containsKey(word.charAt(0))) {
-                        wordList = wordMap.get(word.charAt(0));
-                    } else {
-                        wordList = new LinkedList<>();
-                    }
-                    wordList.add(word);
-                    wordMap.put(word.charAt(0), wordList);
+                LinkedList<String> wordList;
+                if (wordMap.containsKey(word.charAt(0))) {
+                    wordList = wordMap.get(word.charAt(0));
+                } else {
+                    wordList = new LinkedList<>();
                 }
+                wordList.add(word);
+                wordMap.put(word.charAt(0), wordList);
             }
             RandomAccessFile writer = new RandomAccessFile("wordsDic.txt", "rw");
             for(Character c : wordMap.keySet()) {
@@ -70,7 +68,7 @@ public class WordsHandler {
 
     public static void main(String[] args) {
         WordsHandler handler = new WordsHandler();
-        handler.preHandle("words.txt");
+        handler.handle("smallDic.txt");
     }
 
 }

@@ -13,7 +13,8 @@ public class PinyinTireTree {
 
     public static final char NOT_CHOOSE = ' ';
     public static final String NOT_CHOOSE_S = " ";
-    private static final double VALUE_DECAY_RATE = 0.99999;
+    private static final double VALUE_DECAY_RATE = 0.9999;
+    private static final int VALUE_INCREASE_STEP = 1;
 
     private PinyinNode root;
     private File config;
@@ -163,7 +164,7 @@ public class PinyinTireTree {
                 dic.seek(curNode.addressStart);
                 for (int i = 0; i < curChars.size(); i++) {
                     if (i == pos) {
-                        v = Math.tanh((arctanh + 1) / 1000d);
+                        v = Math.tanh((arctanh + VALUE_INCREASE_STEP) / 1000d);
                     } else {
                         v = curValue.get(i) * VALUE_DECAY_RATE;
                     }
@@ -215,7 +216,7 @@ public class PinyinTireTree {
                 wordDic.seek(wordStartAddress);
                 for (int i = 0; i < curWords.size(); i++) {
                     if (i == pos) {
-                        v = Math.tanh((arctanh + 1) / 1000d);
+                        v = Math.tanh((arctanh + VALUE_INCREASE_STEP) / 1000d);
                     } else {
                         v = curWordsValue.get(i) * VALUE_DECAY_RATE;
                     }
