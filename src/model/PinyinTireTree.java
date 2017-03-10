@@ -13,8 +13,10 @@ public class PinyinTireTree {
 
     public static final char NOT_CHOOSE = ' ';
     public static final String NOT_CHOOSE_S = " ";
-    private static final double VALUE_DECAY_RATE = 0.9999;
-    private static final int VALUE_INCREASE_STEP = 1;
+
+    private static final int NO_WORDS = -1;
+    private static final double VALUE_DECAY_RATE = 1;
+    private static final int VALUE_INCREASE_STEP = 0;
 
     private PinyinNode root;
     private File config;
@@ -187,22 +189,24 @@ public class PinyinTireTree {
     private TreeMap<String, Double> getWords(int pos) {
         int length = curLengthOfWords.get(pos);
         wordStartAddress = curAddress.get(pos);
-        try{
-            RandomAccessFile wordDic = new RandomAccessFile("WordsDic.txt", "rw");
-            TreeMap<String, Double> wordMap = new TreeMap<>(wordsValueComparator);
-            wordDic.seek(wordStartAddress);
-            for (int i = 0; i < length; i++) {
-                String word = wordDic.readUTF();
-                Double value = wordDic.readDouble();
-                curWords.add(word);
-                curWordsValue.add(value);
-                wordMap.put(word, value);
+        if (wordStartAddress != NO_WORDS) {
+            try {
+                RandomAccessFile wordDic = new RandomAccessFile("WordsDic.txt", "rw");
+                TreeMap<String, Double> wordMap = new TreeMap<>(wordsValueComparator);
+                wordDic.seek(wordStartAddress);
+                for (int i = 0; i < length; i++) {
+                    String word = wordDic.readUTF();
+                    Double value = wordDic.readDouble();
+                    curWords.add(word);
+                    curWordsValue.add(value);
+                    wordMap.put(word, value);
+                }
+                return wordMap;
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            return wordMap;
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-        return null;
+        return new TreeMap<>();
     }
 
     public void chooseWord(String word) {
