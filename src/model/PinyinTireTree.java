@@ -57,7 +57,7 @@ public class PinyinTireTree {
                 String info[] = singleConfig.split(",");
                 // eg. (a,1,20) refers to (pinyin, address of start, num of character),
                 // please check config.is to know more
-                pinyinConfig.put(info[0], info[1] + "," + info[2]);
+                pinyinConfig.put(info[0], info[1] + " " + info[2]);
             }
             for (String key : pinyinConfig.keySet()) {
                 addNode(root, key, pinyinConfig.get(key));

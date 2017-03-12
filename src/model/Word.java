@@ -6,9 +6,8 @@ import java.io.Serializable;
  * Created by tangyifeng on 17/2/19.
  * Email: yifengtang_hust@outlook.com
  */
-public class Word implements Serializable {
+public class Word  {
 
-    private static final long serialVersionUID = 20170219;
     private String self;
     private double value;
 

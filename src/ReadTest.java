@@ -18,8 +18,8 @@ public class ReadTest {
         PinyinTireTree tireTree = new PinyinTireTree("config.is", "library.is");
         tireTree.initial();
         System.out.println(System.currentTimeMillis());
-        TreeMap<Character, Double> map = tireTree.getCharacters("jiang");
-        TreeMap<String, Double> wordMap = tireTree.chooseCharacter('江');
+        TreeMap<Character, Double> map = tireTree.getCharacters("yi");
+        TreeMap<String, Double> wordMap = tireTree.chooseCharacter('异');
         tireTree.chooseWord(PinyinTireTree.NOT_CHOOSE_S);
         System.out.println(System.currentTimeMillis());
 
