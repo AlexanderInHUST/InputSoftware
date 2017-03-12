@@ -44,7 +44,7 @@ public class WordsHandler {
                         int value = map.get(s);
                         if (value > 300) {
                             writer.writeUTF(s);
-                            writer.writeDouble(Math.tanh((double) value / (double) allCount * 1000));
+                            writer.writeDouble(BytesTool.changeDouble(Math.tanh((double) value / (double) allCount * 1000)));
                             System.out.println(s + " " + (double) value / (double) allCount * 1000);
                             num++;
                         }

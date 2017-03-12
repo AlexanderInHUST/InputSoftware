@@ -28,10 +28,10 @@ public class MainGenerator {
                     if (c != ' ') {
                         byte[] ch = c.toString().getBytes();
                         library.write(ch);
-                        library.writeDouble(Math.tanh(0.001));
+                        library.writeDouble(BytesTool.changeDouble(Math.tanh(0.001)));
                         int wordInfo[] = getCharNum(c);
-                        library.writeInt(wordInfo[0]);
-                        library.writeInt(wordInfo[1]);
+                        library.writeInt(BytesTool.changeInt(wordInfo[0]));
+                        library.writeInt(BytesTool.changeInt(wordInfo[1]));
                         System.out.println(c + " " + wordInfo[0] + " " + wordInfo[1]);
                     }
                 }
