@@ -23,9 +23,9 @@ public class ReadTest {
         tireTree.chooseWord(PinyinTireTree.NOT_CHOOSE_S);
         System.out.println(System.currentTimeMillis());
 
-//        for(Character c : map.keySet()) {
-//            System.out.println(c + " " + map.get(c));
-//        }
+        for(Character c : map.keySet()) {
+            System.out.println(c + " " + map.get(c));
+        }
         for(String s : wordMap.keySet()) {
             System.out.println(s + " " + wordMap.get(s));
         }
