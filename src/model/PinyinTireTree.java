@@ -70,7 +70,7 @@ public class PinyinTireTree {
 
     private void addNode(PinyinNode node, String key, String data) {
         if (key.length() == 0) {
-            String info[] = data.split(",");
+            String info[] = data.split(" ");
             node.addressStart = Long.parseLong(info[0]);
             node.length = Short.parseShort(info[1]);
             node.hasChild = true;

@@ -11,8 +11,8 @@ public class MainGenerator {
 
     public static void generate(String d) {
         try {
-            File config = new File("config.is");
-            RandomAccessFile library = new RandomAccessFile("library.is", "rw");
+            File config = new File("config_d.is");
+            RandomAccessFile library = new RandomAccessFile("library_d.is", "rw");
             BufferedReader reader = new BufferedReader(new FileReader(d));
             PrintWriter writer = new PrintWriter(config);
             int curAddress = 0;
@@ -78,7 +78,7 @@ public class MainGenerator {
     }
 
     public static void main(String[] args) {
-        generate("dic.txt");
+        generate("dic_d.txt");
     }
 
 }

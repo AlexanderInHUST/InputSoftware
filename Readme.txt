@@ -1,0 +1,1 @@
+包括config.is library.is wordsDic.txt三个必要文件
